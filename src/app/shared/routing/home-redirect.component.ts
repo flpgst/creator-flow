@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { SessionStateService } from '../session/session-state.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-home-redirect',
@@ -9,12 +9,17 @@ import { SessionStateService } from '../session/session-state.service';
   styleUrl: './home-redirect.component.css',
 })
 export class HomeRedirectComponent {
+  private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly sessionState = inject(SessionStateService);
 
   constructor() {
-    void this.router.navigateByUrl(
-      this.sessionState.isAuthenticated() ? '/comments' : '/login',
+    void this.redirectBySession();
+  }
+
+  private async redirectBySession(): Promise<void> {
+    await this.authService.waitForInitialSession();
+    await this.router.navigateByUrl(
+      this.authService.isAuthenticated() ? '/comments' : '/login',
     );
   }
 }

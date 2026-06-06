@@ -3,10 +3,56 @@
     <p class="eyebrow">Creator Flow</p>
     <h1 id="login-title">Entrar</h1>
     <p class="summary">
-      A autenticacao real entra na fase 3. Por enquanto, este acesso local valida
-      o fluxo de rotas da base do app.
+      Acesse sua conta para conectar o canal, importar comentarios e montar
+      roteiros.
     </p>
 
-    <button type="button" (click)="continueDemo()">Entrar em modo demo</button>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          formControlName="email"
+        />
+        @if (form.controls.email.touched && form.controls.email.hasError('required')) {
+          <p class="field-error">Informe seu email.</p>
+        } @else if (form.controls.email.touched && form.controls.email.hasError('email')) {
+          <p class="field-error">Informe um email valido.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password">Senha</label>
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          formControlName="password"
+        />
+        @if (form.controls.password.touched && form.controls.password.hasError('required')) {
+          <p class="field-error">Informe sua senha.</p>
+        } @else if (form.controls.password.touched && form.controls.password.hasError('minlength')) {
+          <p class="field-error">Use pelo menos 6 caracteres.</p>
+        }
+      </div>
+
+      @if (authError()) {
+        <p class="auth-error" role="alert">{{ authError() }}</p>
+      }
+
+      <button type="submit" [disabled]="loading()">
+        @if (loading()) {
+          Processando...
+        } @else {
+          {{ submitLabel() }}
+        }
+      </button>
+    </form>
+
+    <button class="secondary-action" type="button" (click)="toggleMode()">
+      {{ secondaryActionLabel() }}
+    </button>
   </section>
 </main>

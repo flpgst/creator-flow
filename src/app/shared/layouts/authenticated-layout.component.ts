@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
-import { SessionStateService } from '../session/session-state.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-authenticated-layout',
@@ -10,11 +10,19 @@ import { SessionStateService } from '../session/session-state.service';
   styleUrl: './authenticated-layout.component.css',
 })
 export class AuthenticatedLayoutComponent {
+  private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly sessionState = inject(SessionStateService);
 
-  signOut(): void {
-    this.sessionState.signOutDemo();
-    void this.router.navigateByUrl('/login');
+  readonly user = this.authService.user;
+  readonly loading = this.authService.loading;
+  readonly authError = this.authService.error;
+
+  async signOut(): Promise<void> {
+    try {
+      await this.authService.signOut();
+      await this.router.navigateByUrl('/login');
+    } catch {
+      // Error state is exposed by AuthService for the template.
+    }
   }
 }

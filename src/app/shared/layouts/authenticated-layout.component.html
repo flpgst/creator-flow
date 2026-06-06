@@ -8,8 +8,19 @@
       <a routerLink="/scripts/new" routerLinkActive="active">Novo roteiro</a>
     </nav>
 
-    <button class="sign-out" type="button" (click)="signOut()">Sair</button>
+    <div class="session-actions">
+      @if (user()?.email) {
+        <span class="user-email">{{ user()?.email }}</span>
+      }
+      <button class="sign-out" type="button" [disabled]="loading()" (click)="signOut()">
+        Sair
+      </button>
+    </div>
   </header>
+
+  @if (authError()) {
+    <p class="shell-error" role="alert">{{ authError() }}</p>
+  }
 
   <main class="content">
     <router-outlet />
