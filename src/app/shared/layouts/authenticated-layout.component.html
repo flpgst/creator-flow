@@ -1,0 +1,17 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/comments" aria-label="Creator Flow">Creator Flow</a>
+
+    <nav class="nav" aria-label="Navegacao principal">
+      <a routerLink="/connect-youtube" routerLinkActive="active">YouTube</a>
+      <a routerLink="/comments" routerLinkActive="active">Comentarios</a>
+      <a routerLink="/scripts/new" routerLinkActive="active">Novo roteiro</a>
+    </nav>
+
+    <button class="sign-out" type="button" (click)="signOut()">Sair</button>
+  </header>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>
