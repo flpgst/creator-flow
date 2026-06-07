@@ -13,6 +13,9 @@ type PublicTable<Row, Insert, Update = Partial<Insert>> = {
   Relationships: never[];
 };
 
+export type YoutubeConnectionStatus = 'active' | 'expired' | 'revoked';
+export type YoutubeSyncJobStatus = 'pending' | 'running' | 'completed' | 'failed';
+
 export interface Database {
   public: {
     Tables: {
@@ -22,12 +25,14 @@ export interface Database {
           email: string;
           display_name: string | null;
           created_at: string;
+          updated_at: string;
         },
         {
           id: string;
           email: string;
           display_name?: string | null;
           created_at?: string;
+          updated_at?: string;
         }
       >;
       youtube_connections: PublicTable<
@@ -37,9 +42,13 @@ export interface Database {
           channel_id: string;
           channel_title: string;
           scopes: string[];
-          status: 'active' | 'expired' | 'revoked';
+          status: YoutubeConnectionStatus;
+          encrypted_refresh_token: string;
+          encrypted_access_token: string | null;
+          access_token_expires_at: string | null;
           connected_at: string;
           updated_at: string;
+          revoked_at: string | null;
         },
         {
           id?: string;
@@ -47,31 +56,43 @@ export interface Database {
           channel_id: string;
           channel_title: string;
           scopes?: string[];
-          status?: 'active' | 'expired' | 'revoked';
+          status?: YoutubeConnectionStatus;
+          encrypted_refresh_token: string;
+          encrypted_access_token?: string | null;
+          access_token_expires_at?: string | null;
           connected_at?: string;
           updated_at?: string;
+          revoked_at?: string | null;
         }
       >;
       youtube_sync_jobs: PublicTable<
         {
           id: string;
           user_id: string;
-          status: 'pending' | 'running' | 'completed' | 'failed';
+          youtube_connection_id: string | null;
+          status: YoutubeSyncJobStatus;
           imported_count: number;
           updated_count: number;
+          processed_count: number;
+          page_token: string | null;
           error_message: string | null;
           started_at: string;
           finished_at: string | null;
+          created_at: string;
         },
         {
           id?: string;
           user_id: string;
-          status?: 'pending' | 'running' | 'completed' | 'failed';
+          youtube_connection_id?: string | null;
+          status?: YoutubeSyncJobStatus;
           imported_count?: number;
           updated_count?: number;
+          processed_count?: number;
+          page_token?: string | null;
           error_message?: string | null;
           started_at?: string;
           finished_at?: string | null;
+          created_at?: string;
         }
       >;
       youtube_videos: PublicTable<
@@ -83,6 +104,8 @@ export interface Database {
           url: string;
           published_at: string | null;
           thumbnail_url: string | null;
+          created_at: string;
+          updated_at: string;
         },
         {
           id?: string;
@@ -92,6 +115,8 @@ export interface Database {
           url: string;
           published_at?: string | null;
           thumbnail_url?: string | null;
+          created_at?: string;
+          updated_at?: string;
         }
       >;
       comments: PublicTable<
@@ -107,6 +132,7 @@ export interface Database {
           is_favorite: boolean;
           published_at: string;
           updated_at: string;
+          created_at: string;
         },
         {
           id?: string;
@@ -120,6 +146,7 @@ export interface Database {
           is_favorite?: boolean;
           published_at: string;
           updated_at?: string;
+          created_at?: string;
         }
       >;
       scripts: PublicTable<
@@ -147,6 +174,7 @@ export interface Database {
           comment_text_snapshot: string;
           video_title_snapshot: string;
           video_url_snapshot: string;
+          created_at: string;
         },
         {
           id?: string;
@@ -156,12 +184,16 @@ export interface Database {
           comment_text_snapshot: string;
           video_title_snapshot: string;
           video_url_snapshot: string;
+          created_at?: string;
         }
       >;
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
-    Enums: Record<string, never>;
+    Enums: {
+      youtube_connection_status: YoutubeConnectionStatus;
+      youtube_sync_job_status: YoutubeSyncJobStatus;
+    };
     CompositeTypes: Record<string, never>;
   };
 }

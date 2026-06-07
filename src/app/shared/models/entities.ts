@@ -6,6 +6,7 @@ export interface Profile {
   email: string;
   displayName: string | null;
   createdAt: IsoDateString;
+  updatedAt: IsoDateString;
 }
 
 export interface YoutubeConnection {
@@ -15,8 +16,10 @@ export interface YoutubeConnection {
   channelTitle: string;
   scopes: string[];
   status: 'active' | 'expired' | 'revoked';
+  accessTokenExpiresAt: IsoDateString | null;
   connectedAt: IsoDateString;
   updatedAt: IsoDateString;
+  revokedAt: IsoDateString | null;
 }
 
 export interface YoutubeSyncJob {
@@ -25,9 +28,12 @@ export interface YoutubeSyncJob {
   status: 'pending' | 'running' | 'completed' | 'failed';
   importedCount: number;
   updatedCount: number;
+  processedCount: number;
+  pageToken: string | null;
   errorMessage: string | null;
   startedAt: IsoDateString;
   finishedAt: IsoDateString | null;
+  createdAt: IsoDateString;
 }
 
 export interface YoutubeVideo {
@@ -38,6 +44,8 @@ export interface YoutubeVideo {
   url: string;
   publishedAt: IsoDateString | null;
   thumbnailUrl: string | null;
+  createdAt: IsoDateString;
+  updatedAt: IsoDateString;
 }
 
 export interface Comment {
@@ -52,6 +60,7 @@ export interface Comment {
   isFavorite: boolean;
   publishedAt: IsoDateString;
   updatedAt: IsoDateString;
+  createdAt: IsoDateString;
 }
 
 export interface Script {
@@ -70,4 +79,5 @@ export interface ScriptComment {
   commentTextSnapshot: string;
   videoTitleSnapshot: string;
   videoUrlSnapshot: string;
+  createdAt: IsoDateString;
 }
