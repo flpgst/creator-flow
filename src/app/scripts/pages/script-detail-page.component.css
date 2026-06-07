@@ -1,10 +1,17 @@
 .page {
   display: grid;
-  gap: 0.75rem;
+  gap: 1rem;
+}
+
+.page-header {
+  align-items: end;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
 }
 
 .eyebrow {
-  margin: 0;
+  margin: 0 0 0.4rem;
   color: #0369a1;
   font-size: 0.78rem;
   font-weight: 800;
@@ -12,6 +19,7 @@
 }
 
 h1,
+h2,
 p {
   margin: 0;
 }
@@ -25,7 +33,177 @@ h1 {
   line-height: 1.55;
 }
 
-a {
+a,
+button {
+  font: inherit;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: end;
+}
+
+.header-actions a,
+.comment-main a {
   color: #0369a1;
   font-weight: 700;
+  text-decoration: none;
+}
+
+.header-actions a:hover,
+.comment-main a:hover {
+  text-decoration: underline;
+}
+
+button {
+  border: 0;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-weight: 700;
+  min-height: 2.65rem;
+  padding: 0 0.85rem;
+  white-space: nowrap;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.feedback {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.45rem;
+  color: #991b1b;
+  padding: 0.8rem 1rem;
+}
+
+.save-bar {
+  align-items: center;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 0.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+}
+
+.save-bar span {
+  color: #075985;
+  font-weight: 700;
+}
+
+.save-bar button {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.empty-state {
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.empty-state p {
+  color: #475569;
+  line-height: 1.55;
+  margin-top: 0.5rem;
+}
+
+.selected-comments {
+  background: #ffffff;
+  border: 1px solid #dbe3ee;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.comment-row {
+  align-items: start;
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  padding: 1rem;
+}
+
+.comment-row + .comment-row {
+  border-top: 1px solid #e2e8f0;
+}
+
+.position {
+  align-items: center;
+  background: #eff6ff;
+  border-radius: 999px;
+  color: #075985;
+  display: flex;
+  font-weight: 700;
+  height: 2rem;
+  justify-content: center;
+  width: 2rem;
+}
+
+.comment-main {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.comment-meta {
+  align-items: center;
+  color: #64748b;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.88rem;
+  gap: 0.45rem;
+}
+
+.comment-meta strong {
+  color: #0f172a;
+}
+
+.comment-main p {
+  color: #1e293b;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.row-actions {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.row-actions button {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+}
+
+.row-actions .remove-button {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+}
+
+@media (max-width: 760px) {
+  .page-header,
+  .save-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .header-actions {
+    justify-content: start;
+  }
+
+  .comment-row {
+    grid-template-columns: 2rem minmax(0, 1fr);
+  }
+
+  .row-actions {
+    flex-wrap: wrap;
+    grid-column: 2;
+  }
 }

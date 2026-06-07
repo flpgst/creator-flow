@@ -14,6 +14,7 @@ export interface CommentListItem {
 }
 
 export interface ScriptCommentItem {
+  id: EntityId;
   commentId: EntityId;
   text: string;
   videoTitle: string;

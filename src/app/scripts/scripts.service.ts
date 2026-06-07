@@ -1,14 +1,19 @@
 import { Injectable, inject, signal } from '@angular/core';
 
 import { AuthService } from '../auth/auth.service';
-import type { Comment, Script, YoutubeVideo } from '../shared/models/entities';
+import type { Comment, Script, ScriptComment, YoutubeVideo } from '../shared/models/entities';
 import type { Tables, TablesInsert } from '../shared/models/database.types';
-import type { CommentListItem } from '../shared/models/view-models';
+import type {
+  CommentListItem,
+  ScriptCommentItem,
+  ScriptDetailViewModel,
+} from '../shared/models/view-models';
 import { SupabaseService } from '../shared/services/supabase.service';
 
 type CommentRow = Tables<'comments'>;
 type YoutubeVideoRow = Tables<'youtube_videos'>;
 type ScriptRow = Tables<'scripts'>;
+type ScriptCommentRow = Tables<'script_comments'>;
 type ScriptCommentInsert = TablesInsert<'script_comments'>;
 
 @Injectable({
@@ -24,6 +29,64 @@ export class ScriptsService {
   readonly saving = this.savingState.asReadonly();
   readonly loading = this.loadingState.asReadonly();
   readonly error = this.errorState.asReadonly();
+
+  async loadScript(scriptId: string): Promise<ScriptDetailViewModel | null> {
+    this.loadingState.set(true);
+    this.errorState.set(null);
+
+    try {
+      const { data: scriptRow, error: scriptError } = await this.supabaseService.client
+        .from('scripts')
+        .select('id, user_id, title, created_at, updated_at')
+        .eq('id', scriptId)
+        .maybeSingle<ScriptRow>();
+
+      if (scriptError) {
+        throw new Error(scriptError.message);
+      }
+
+      if (!scriptRow) {
+        return null;
+      }
+
+      const { data: scriptCommentRows, error: commentsError } =
+        await this.supabaseService.client
+          .from('script_comments')
+          .select(
+            [
+              'id',
+              'script_id',
+              'comment_id',
+              'position',
+              'comment_text_snapshot',
+              'video_title_snapshot',
+              'video_url_snapshot',
+              'created_at',
+            ].join(','),
+          )
+          .eq('script_id', scriptRow.id)
+          .order('position', {
+            ascending: true,
+          })
+          .returns<ScriptCommentRow[]>();
+
+      if (commentsError) {
+        throw new Error(commentsError.message);
+      }
+
+      return {
+        script: this.mapScript(scriptRow),
+        comments: (scriptCommentRows ?? []).map((comment) =>
+          this.mapScriptCommentItem(comment),
+        ),
+      };
+    } catch (error) {
+      this.errorState.set(this.toScriptsErrorMessage(error));
+      throw error;
+    } finally {
+      this.loadingState.set(false);
+    }
+  }
 
   async loadSelectedComments(commentIds: string[]): Promise<CommentListItem[]> {
     const uniqueCommentIds = [...new Set(commentIds)];
@@ -164,6 +227,69 @@ export class ScriptsService {
     }
   }
 
+  async updateScriptComments(
+    scriptId: string,
+    comments: ScriptCommentItem[],
+  ): Promise<ScriptCommentItem[]> {
+    this.savingState.set(true);
+    this.errorState.set(null);
+
+    try {
+      const { error: deleteError } = await this.supabaseService.client
+        .from('script_comments')
+        .delete()
+        .eq('script_id', scriptId);
+
+      if (deleteError) {
+        throw new Error(deleteError.message);
+      }
+
+      if (comments.length === 0) {
+        return [];
+      }
+
+      const scriptComments: ScriptCommentInsert[] = comments.map((item, index) => ({
+        script_id: scriptId,
+        comment_id: item.commentId,
+        position: index,
+        comment_text_snapshot: item.text,
+        video_title_snapshot: item.videoTitle,
+        video_url_snapshot: item.videoUrl,
+      }));
+
+      const { data, error: insertError } = await this.supabaseService.client
+        .from('script_comments')
+        .insert(scriptComments)
+        .select(
+          [
+            'id',
+            'script_id',
+            'comment_id',
+            'position',
+            'comment_text_snapshot',
+            'video_title_snapshot',
+            'video_url_snapshot',
+            'created_at',
+          ].join(','),
+        )
+        .order('position', {
+          ascending: true,
+        })
+        .returns<ScriptCommentRow[]>();
+
+      if (insertError) {
+        throw new Error(insertError.message);
+      }
+
+      return (data ?? []).map((comment) => this.mapScriptCommentItem(comment));
+    } catch (error) {
+      this.errorState.set(this.toScriptsErrorMessage(error));
+      throw error;
+    } finally {
+      this.savingState.set(false);
+    }
+  }
+
   clearError(): void {
     this.errorState.set(null);
   }
@@ -221,6 +347,32 @@ export class ScriptsService {
     };
   }
 
+  private mapScriptComment(row: ScriptCommentRow): ScriptComment {
+    return {
+      id: row.id,
+      scriptId: row.script_id,
+      commentId: row.comment_id,
+      position: row.position,
+      commentTextSnapshot: row.comment_text_snapshot,
+      videoTitleSnapshot: row.video_title_snapshot,
+      videoUrlSnapshot: row.video_url_snapshot,
+      createdAt: row.created_at,
+    };
+  }
+
+  private mapScriptCommentItem(row: ScriptCommentRow): ScriptCommentItem {
+    const scriptComment = this.mapScriptComment(row);
+
+    return {
+      id: scriptComment.id,
+      commentId: scriptComment.commentId,
+      text: scriptComment.commentTextSnapshot,
+      videoTitle: scriptComment.videoTitleSnapshot,
+      videoUrl: scriptComment.videoUrlSnapshot,
+      position: scriptComment.position,
+    };
+  }
+
   private mapComment(row: CommentRow): Comment {
     return {
       id: row.id,
@@ -257,6 +409,6 @@ export class ScriptsService {
       return error.message;
     }
 
-    return 'Nao foi possivel salvar o roteiro.';
+    return 'Nao foi possivel processar o roteiro.';
   }
 }
