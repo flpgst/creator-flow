@@ -95,6 +95,24 @@ export interface Database {
           created_at?: string;
         }
       >;
+      youtube_oauth_states: PublicTable<
+        {
+          id: string;
+          user_id: string;
+          state_hash: string;
+          expires_at: string;
+          consumed_at: string | null;
+          created_at: string;
+        },
+        {
+          id?: string;
+          user_id: string;
+          state_hash: string;
+          expires_at: string;
+          consumed_at?: string | null;
+          created_at?: string;
+        }
+      >;
       youtube_videos: PublicTable<
         {
           id: string;

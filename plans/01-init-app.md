@@ -54,14 +54,14 @@ Construir um MVP multiusuario em Angular 19 + Supabase onde cada usuario faz log
 
 ### 4. Criar Modelo De Dados Supabase
 
-- [ ] Criar migrations Supabase para `profiles`.
-- [ ] Criar migrations para `youtube_connections`.
-- [ ] Criar migrations para `youtube_sync_jobs`.
-- [ ] Criar migrations para `youtube_videos`.
-- [ ] Criar migrations para `comments`.
-- [ ] Criar migrations para `scripts`.
-- [ ] Criar migrations para `script_comments`.
-- [ ] Adicionar indices e constraints:
+- [ X ] Criar migrations Supabase para `profiles`.
+- [ X ] Criar migrations para `youtube_connections`.
+- [ X ] Criar migrations para `youtube_sync_jobs`.
+- [ X ] Criar migrations para `youtube_videos`.
+- [ X ] Criar migrations para `comments`.
+- [ X ] Criar migrations para `scripts`.
+- [ X ] Criar migrations para `script_comments`.
+- [ X ] Adicionar indices e constraints:
   - `youtube_connections.user_id`
   - `comments.user_id`
   - `comments.youtube_comment_id`
@@ -70,30 +70,30 @@ Construir um MVP multiusuario em Angular 19 + Supabase onde cada usuario faz log
   - `script_comments.script_id`
   - `script_comments.comment_id`
   - `script_comments.position`
-- [ ] Habilitar RLS em todas as tabelas publicas.
-- [ ] Criar policies para isolar dados por `auth.uid()`.
-- [ ] Criar trigger ou fluxo para perfil minimo em `profiles`, se necessario.
+- [ X ] Habilitar RLS em todas as tabelas publicas.
+- [ X ] Criar policies para isolar dados por `auth.uid()`.
+- [ X ] Criar trigger ou fluxo para perfil minimo em `profiles`, se necessario.
 
 **Aceite**
 
-- [ ] Usuario A nao consegue ler ou alterar dados do usuario B.
-- [ ] Upsert de comentario nao duplica `youtube_comment_id` por usuario.
-- [ ] `script_comments.position` preserva a ordem do roteiro.
+- [ X ] Usuario A nao consegue ler ou alterar dados do usuario B.
+- [ X ] Upsert de comentario nao duplica `youtube_comment_id` por usuario.
+- [ X ] `script_comments.position` preserva a ordem do roteiro.
 
 ### 5. Implementar Edge Function `youtube-oauth-start`
 
-- [ ] Criar funcao `youtube-oauth-start`.
-- [ ] Validar usuario autenticado via JWT Supabase.
-- [ ] Gerar `state` vinculado ao usuario autenticado.
-- [ ] Persistir `state` com expiracao curta.
-- [ ] Gerar URL OAuth do Google com scopes necessarios para leitura de comentarios.
-- [ ] Retornar apenas a URL de autorizacao para o frontend.
+- [ X ] Criar funcao `youtube-oauth-start`.
+- [ X ] Validar usuario autenticado via JWT Supabase.
+- [ X ] Gerar `state` vinculado ao usuario autenticado.
+- [ X ] Persistir `state` com expiracao curta.
+- [ X ] Gerar URL OAuth do Google com scopes necessarios para leitura de comentarios.
+- [ X ] Retornar apenas a URL de autorizacao para o frontend.
 
 **Aceite**
 
-- [ ] Usuario autenticado recebe URL OAuth valida.
-- [ ] Usuario anonimo nao consegue iniciar OAuth.
-- [ ] `state` e gerado de forma nao previsivel e expira.
+- [ X ] Usuario autenticado recebe URL OAuth valida.
+- [ X ] Usuario anonimo nao consegue iniciar OAuth.
+- [ X ] `state` e gerado de forma nao previsivel e expira.
 
 ### 6. Implementar Edge Function `youtube-oauth-callback`
 
