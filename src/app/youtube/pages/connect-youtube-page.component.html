@@ -5,11 +5,59 @@
   </header>
 
   <div class="panel">
-    <h2>Nenhum canal conectado</h2>
-    <p>
-      Esta tela esta pronta para receber o fluxo OAuth e exibir o status da
-      conexao nas proximas fases.
-    </p>
-    <button type="button" disabled>Conectar YouTube</button>
+    @if (loading()) {
+      <div class="status-block">
+        <h2>Carregando conexao</h2>
+        <p>Buscando o status atual do canal conectado.</p>
+      </div>
+    } @else {
+      @if (connection(); as channel) {
+        <div class="status-block">
+          <span class="status-pill" [class.status-pill--active]="hasActiveConnection()">
+            {{ hasActiveConnection() ? 'Conectado' : channel.status }}
+          </span>
+          <h2>{{ channel.channelTitle }}</h2>
+          <dl class="connection-details">
+            <div>
+              <dt>ID do canal</dt>
+              <dd>{{ channel.channelId }}</dd>
+            </div>
+            <div>
+              <dt>Conectado em</dt>
+              <dd>{{ channel.connectedAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
+            </div>
+            <div>
+              <dt>Ultima atualizacao</dt>
+              <dd>{{ channel.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
+            </div>
+          </dl>
+        </div>
+      } @else {
+        <div class="status-block">
+          <h2>Nenhum canal conectado</h2>
+          <p>Conecte seu canal para importar comentarios e montar roteiros.</p>
+        </div>
+      }
+    }
+
+    @if (feedbackMessage(); as message) {
+      <p
+        class="feedback"
+        [class.feedback--success]="callbackStatus() === 'success'"
+        role="alert"
+      >
+        {{ message }}
+      </p>
+    }
+
+    <button type="button" (click)="connectYoutube()" [disabled]="loading() || connecting()">
+      @if (connecting()) {
+        Redirecionando...
+      } @else if (connection()) {
+        Reconectar YouTube
+      } @else {
+        Conectar YouTube
+      }
+    </button>
   </div>
 </section>

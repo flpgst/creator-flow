@@ -28,17 +28,92 @@ h1 {
   padding: 1.25rem;
 }
 
-.panel p {
-  margin: 0.5rem 0 1rem;
+.status-block {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.status-block p {
   color: #475569;
   line-height: 1.55;
 }
 
-button {
+.status-pill {
   border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 800;
+  justify-self: start;
+  padding: 0.28rem 0.6rem;
+  text-transform: uppercase;
+}
+
+.status-pill--active {
+  border-color: #86efac;
+  background: #dcfce7;
+  color: #166534;
+}
+
+.connection-details {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.connection-details div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.connection-details dt {
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.connection-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.feedback {
+  border: 1px solid #fecaca;
   border-radius: 0.4rem;
+  background: #fef2f2;
+  color: #991b1b;
+  font-weight: 700;
+  margin: 1rem 0;
+  padding: 0.75rem 0.85rem;
+}
+
+.feedback--success {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+button {
+  border: 1px solid #0284c7;
+  border-radius: 0.4rem;
+  background: #0284c7;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 700;
+  margin-top: 1rem;
+  padding: 0.7rem 0.85rem;
+}
+
+button:disabled {
+  border-color: #cbd5e1;
   background: #f8fafc;
   color: #64748b;
-  font-weight: 700;
-  padding: 0.7rem 0.85rem;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  button {
+    width: 100%;
+  }
 }

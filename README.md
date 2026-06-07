@@ -12,6 +12,39 @@ ng serve
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
+## YouTube OAuth setup
+
+The YouTube connection flow uses Supabase Edge Functions and Google OAuth 2.0.
+Google requires the redirect URI registered in Google Cloud Console to match the
+URI sent by the app exactly.
+
+For local development, add this authorized redirect URI to the Google OAuth
+client:
+
+```text
+http://127.0.0.1:54321/functions/v1/youtube-oauth-callback
+```
+
+Then keep the same value in `supabase/.env.local`:
+
+```bash
+GOOGLE_OAUTH_REDIRECT_URI=http://127.0.0.1:54321/functions/v1/youtube-oauth-callback
+```
+
+If you use `localhost` instead of `127.0.0.1`, a different Supabase port, or a
+deployed Supabase project URL, register that exact URI in Google Cloud Console
+and set `GOOGLE_OAUTH_REDIRECT_URI` to the same value.
+
+If Google returns `Erro 403: access_denied` while the OAuth consent screen is in
+testing mode, add the Google account used for login as a test user:
+
+```text
+Google Cloud Console > APIs & Services > OAuth consent screen > Audience > Test users
+```
+
+The project must also have the YouTube Data API v3 enabled and the requested
+YouTube scopes configured on the OAuth consent screen.
+
 ## Code scaffolding
 
 Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
