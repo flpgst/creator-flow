@@ -39,6 +39,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'scripts',
+        loadComponent: () =>
+          import('./scripts/pages/scripts-list-page.component').then(
+            (m) => m.ScriptsListPageComponent,
+          ),
+      },
+      {
         path: 'scripts/new',
         loadComponent: () =>
           import('./scripts/pages/new-script-page.component').then(

@@ -26,3 +26,8 @@ export interface ScriptDetailViewModel {
   script: Script;
   comments: ScriptCommentItem[];
 }
+
+export interface ScriptListItem {
+  script: Script;
+  commentCount: number;
+}

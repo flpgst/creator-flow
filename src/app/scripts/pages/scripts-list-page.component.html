@@ -1,0 +1,100 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Roteiros</p>
+      <h1>Roteiros salvos</h1>
+    </div>
+    <a routerLink="/comments">Voltar aos comentarios</a>
+  </header>
+
+  @if (error(); as message) {
+    <p class="feedback" role="alert">{{ message }}</p>
+  }
+
+  @if (loading()) {
+    <div class="empty-state">
+      <h2>Carregando roteiros</h2>
+    </div>
+  } @else if (scripts().length === 0) {
+    <div class="empty-state">
+      <h2>Nenhum roteiro salvo</h2>
+    </div>
+  } @else {
+    <section class="scripts-list" aria-label="Roteiros salvos">
+      @for (item of scripts(); track trackByScriptId($index, item)) {
+        <article class="script-row">
+          <div class="script-main">
+            <h2>{{ item.script.title }}</h2>
+            <p>
+              Atualizado em {{ item.script.updatedAt || item.script.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+            </p>
+          </div>
+
+          <p class="comment-count">
+            {{ item.commentCount }}
+            @if (item.commentCount === 1) {
+              comentario
+            } @else {
+              comentarios
+            }
+          </p>
+
+          <div class="row-actions">
+            <a [routerLink]="['/scripts', item.script.id]">Abrir</a>
+            <button
+              type="button"
+              class="delete-button"
+              (click)="openDeleteDialog(item)"
+              [disabled]="deletingScriptId() === item.script.id"
+            >
+              @if (deletingScriptId() === item.script.id) {
+                Deletando...
+              } @else {
+                Deletar
+              }
+            </button>
+          </div>
+        </article>
+      }
+    </section>
+  }
+</section>
+
+@if (scriptPendingDelete(); as item) {
+  <div class="modal-backdrop" role="presentation">
+    <section
+      class="confirm-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delete-script-title"
+    >
+      <h2 id="delete-script-title">Deletar roteiro</h2>
+      <p>
+        Tem certeza que deseja deletar
+        <strong>{{ item.script.title }}</strong>?
+      </p>
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="cancel-button"
+          (click)="closeDeleteDialog()"
+          [disabled]="deletingScriptId() === item.script.id"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="confirm-button"
+          (click)="confirmDelete()"
+          [disabled]="deletingScriptId() === item.script.id"
+        >
+          @if (deletingScriptId() === item.script.id) {
+            Deletando...
+          } @else {
+            Deletar roteiro
+          }
+        </button>
+      </div>
+    </section>
+  </div>
+}

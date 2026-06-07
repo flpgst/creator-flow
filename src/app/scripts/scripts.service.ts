@@ -7,6 +7,7 @@ import type {
   CommentListItem,
   ScriptCommentItem,
   ScriptDetailViewModel,
+  ScriptListItem,
 } from '../shared/models/view-models';
 import { SupabaseService } from '../shared/services/supabase.service';
 
@@ -15,6 +16,9 @@ type YoutubeVideoRow = Tables<'youtube_videos'>;
 type ScriptRow = Tables<'scripts'>;
 type ScriptCommentRow = Tables<'script_comments'>;
 type ScriptCommentInsert = TablesInsert<'script_comments'>;
+type ScriptListRow = ScriptRow & {
+  script_comments?: Pick<ScriptCommentRow, 'id'>[] | null;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +33,48 @@ export class ScriptsService {
   readonly saving = this.savingState.asReadonly();
   readonly loading = this.loadingState.asReadonly();
   readonly error = this.errorState.asReadonly();
+
+  async loadScripts(): Promise<ScriptListItem[]> {
+    this.loadingState.set(true);
+    this.errorState.set(null);
+
+    try {
+      const user = await this.authService.getCurrentUser();
+
+      if (!user) {
+        throw new Error('Sessao expirada. Entre novamente para ver seus roteiros.');
+      }
+
+      const { data: scriptRows, error: scriptsError } =
+        await this.supabaseService.client
+          .from('scripts')
+          .select('id, user_id, title, created_at, updated_at, script_comments(id)')
+          .eq('user_id', user.id)
+          .order('updated_at', {
+            ascending: false,
+          })
+          .returns<ScriptListRow[]>();
+
+      if (scriptsError) {
+        throw new Error(scriptsError.message);
+      }
+
+      return (scriptRows ?? [])
+        .map((row) => ({
+          script: this.mapScript(row),
+          commentCount: row.script_comments?.length ?? 0,
+        }))
+        .sort(
+          (first, second) =>
+            this.scriptSortTimestamp(second.script) - this.scriptSortTimestamp(first.script),
+        );
+    } catch (error) {
+      this.errorState.set(this.toScriptsErrorMessage(error));
+      throw error;
+    } finally {
+      this.loadingState.set(false);
+    }
+  }
 
   async loadScript(scriptId: string): Promise<ScriptDetailViewModel | null> {
     this.loadingState.set(true);
@@ -264,6 +310,34 @@ export class ScriptsService {
     }
   }
 
+  async deleteScript(scriptId: string): Promise<void> {
+    this.savingState.set(true);
+    this.errorState.set(null);
+
+    try {
+      const user = await this.authService.getCurrentUser();
+
+      if (!user) {
+        throw new Error('Sessao expirada. Entre novamente para deletar o roteiro.');
+      }
+
+      const { error } = await this.supabaseService.client
+        .from('scripts')
+        .delete()
+        .eq('id', scriptId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (error) {
+      this.errorState.set(this.toScriptsErrorMessage(error));
+      throw error;
+    } finally {
+      this.savingState.set(false);
+    }
+  }
+
   clearError(): void {
     this.errorState.set(null);
   }
@@ -319,6 +393,10 @@ export class ScriptsService {
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
+  }
+
+  private scriptSortTimestamp(script: Script): number {
+    return new Date(script.updatedAt || script.createdAt).getTime();
   }
 
   private mapScriptComment(row: ScriptCommentRow): ScriptComment {
