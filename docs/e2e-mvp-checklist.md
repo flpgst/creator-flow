@@ -13,8 +13,8 @@ de considerar o MVP pronto.
   - local: `http://127.0.0.1:54321/functions/v1/youtube-oauth-callback`
   - staging: URL da Edge Function publicada.
 - [ ] Segredos das Edge Functions estao configurados no ambiente testado:
-  - `GOOGLE_OAUTH_CLIENT_ID`
-  - `GOOGLE_OAUTH_CLIENT_SECRET`
+  - `GOOGLE_CLIENT_ID`
+  - `GOOGLE_CLIENT_SECRET`
   - `GOOGLE_OAUTH_REDIRECT_URI`
   - chave de criptografia usada pelas funcoes
 - [ ] Conta Google usada no teste tem acesso ao canal YouTube e esta liberada
@@ -95,7 +95,7 @@ Depois pesquise o bundle gerado por nomes de variaveis sensiveis e formatos
 comuns de segredo:
 
 ```bash
-rg -i "service_role|GOOGLE_OAUTH_CLIENT_SECRET|GOOGLE_CLIENT_SECRET|GOCSPX-|client_secret=|refresh_token=" dist
+rg -i "service_role|GOOGLE_CLIENT_SECRET|GOCSPX-|client_secret=|refresh_token=" dist
 ```
 
 O comando acima nao deve encontrar ocorrencias de segredo. A chave publicavel do

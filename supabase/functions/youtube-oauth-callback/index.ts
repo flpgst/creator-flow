@@ -45,11 +45,23 @@ function getAppUrl(): string {
   return Deno.env.get('APP_URL') ?? Deno.env.get('SITE_URL') ?? DEFAULT_APP_URL;
 }
 
+function buildAppUrl(path: string): URL {
+  const appUrl = new URL(getAppUrl());
+  const basePath = appUrl.pathname.endsWith('/') ? appUrl.pathname : `${appUrl.pathname}/`;
+  const targetPath = path.replace(/^\/+/, '');
+
+  appUrl.pathname = `${basePath}${targetPath}`.replaceAll(/\/{2,}/g, '/');
+  appUrl.search = '';
+  appUrl.hash = '';
+
+  return appUrl;
+}
+
 function redirectToConnectYoutube(params: {
   status: 'success' | 'error';
   error?: string;
 }): Response {
-  const redirectUrl = new URL('/connect-youtube', getAppUrl());
+  const redirectUrl = buildAppUrl('/connect-youtube');
   redirectUrl.searchParams.set('youtubeConnection', params.status);
 
   if (params.error) {

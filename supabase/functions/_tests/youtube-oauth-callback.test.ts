@@ -13,6 +13,30 @@ import {
   sha256Hex,
 } from "./edge-test-helpers.ts";
 
+Deno.test("youtube-oauth-callback redirects Google errors under APP_URL path", async () => {
+  setFunctionEnv();
+  Deno.env.set("APP_URL", "https://flpgst.github.io/creator-flow/");
+  const serve = installDenoServeMock();
+
+  await importEdgeFunction("../youtube-oauth-callback/index.ts");
+
+  const response = await serve.getHandler()(
+    new Request(
+      "http://localhost/functions/v1/youtube-oauth-callback?error=access_denied",
+    ),
+  );
+  const redirectUrl = assertRedirect(response, {
+    youtubeConnection: "error",
+    error: "access_denied",
+  });
+
+  assertEquals(
+    redirectUrl.toString(),
+    "https://flpgst.github.io/creator-flow/connect-youtube?youtubeConnection=error&error=access_denied",
+  );
+  resetFunctionEnv();
+});
+
 Deno.test("youtube-oauth-callback rejects invalid or expired state before calling Google", async () => {
   setFunctionEnv();
   const serve = installDenoServeMock();
@@ -49,6 +73,7 @@ Deno.test("youtube-oauth-callback rejects invalid or expired state before callin
 
 Deno.test("youtube-oauth-callback validates state and never returns refresh token to frontend", async () => {
   setFunctionEnv();
+  Deno.env.set("APP_URL", "https://flpgst.github.io/creator-flow/");
   const serve = installDenoServeMock();
   const calls: QueryCall[] = [];
   const rawAccessToken = "raw-google-access-token";
@@ -142,6 +167,10 @@ Deno.test("youtube-oauth-callback validates state and never returns refresh toke
     youtubeConnection: "success",
   });
 
+  assertEquals(
+    redirectUrl.toString(),
+    "https://flpgst.github.io/creator-flow/connect-youtube?youtubeConnection=success",
+  );
   assertNoTokenLeak(redirectUrl, [rawAccessToken, rawRefreshToken]);
   assertExists(upsertedConnection);
   const connection = upsertedConnection as Record<string, unknown>;
