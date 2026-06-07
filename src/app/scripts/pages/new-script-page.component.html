@@ -1,10 +1,99 @@
 <section class="page">
-  <p class="eyebrow">Roteiros</p>
-  <h1>Novo roteiro</h1>
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Roteiros</p>
+      <h1>Novo roteiro</h1>
+    </div>
+    <a routerLink="/comments">Voltar aos comentarios</a>
+  </header>
 
-  <form class="script-form">
+  <form class="script-form" (ngSubmit)="saveScript()">
     <label for="script-title">Titulo</label>
-    <input id="script-title" type="text" placeholder="Titulo do roteiro" disabled />
-    <button type="button" disabled>Salvar roteiro</button>
+    <input
+      id="script-title"
+      type="text"
+      placeholder="Titulo do roteiro"
+      [ngModel]="title()"
+      (ngModelChange)="updateTitle($event)"
+      (blur)="markTitleTouched()"
+      name="title"
+      required
+      [disabled]="saving()"
+      [attr.aria-invalid]="titleIsInvalid()"
+    />
+    @if (titleIsInvalid()) {
+      <p class="field-error">Informe um titulo para salvar o roteiro.</p>
+    }
+
+    <button type="submit" [disabled]="!canSave()">
+      @if (saving()) {
+        Salvando...
+      } @else {
+        Salvar roteiro
+      }
+    </button>
   </form>
+
+  @if (error(); as message) {
+    <p class="feedback" role="alert">{{ message }}</p>
+  }
+
+  @if (loading()) {
+    <div class="empty-state">
+      <h2>Carregando comentarios</h2>
+      <p>Buscando os comentarios selecionados para montar o roteiro.</p>
+    </div>
+  } @else if (comments().length === 0) {
+    <div class="empty-state">
+      <h2>Nenhum comentario selecionado</h2>
+      <p>Selecione comentarios na listagem antes de criar um roteiro.</p>
+    </div>
+  } @else {
+    <section class="selected-comments" aria-label="Comentarios selecionados">
+      @for (item of comments(); track trackByCommentId($index, item); let index = $index) {
+        <article class="comment-row">
+          <div class="position">{{ index + 1 }}</div>
+
+          <div class="comment-main">
+            <div class="comment-meta">
+              <strong>{{ item.comment.authorName }}</strong>
+              <span>{{ item.comment.publishedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+              <span>{{ item.video.title }}</span>
+            </div>
+            <p>{{ item.comment.text }}</p>
+            <a [href]="item.video.url" target="_blank" rel="noreferrer">
+              Abrir video
+            </a>
+          </div>
+
+          <div class="row-actions" aria-label="Editar ordem do comentario">
+            <button
+              type="button"
+              (click)="moveComment(index, -1)"
+              [disabled]="index === 0 || saving()"
+              aria-label="Mover comentario para cima"
+            >
+              Subir
+            </button>
+            <button
+              type="button"
+              (click)="moveComment(index, 1)"
+              [disabled]="index === comments().length - 1 || saving()"
+              aria-label="Mover comentario para baixo"
+            >
+              Descer
+            </button>
+            <button
+              type="button"
+              class="remove-button"
+              (click)="removeComment(item.comment.id)"
+              [disabled]="saving()"
+            >
+              Remover
+            </button>
+          </div>
+        </article>
+      }
+    </section>
+  }
 </section>

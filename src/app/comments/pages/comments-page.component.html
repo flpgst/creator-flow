@@ -4,14 +4,122 @@
       <p class="eyebrow">Comentarios</p>
       <h1>Comentarios importados</h1>
     </div>
-    <a routerLink="/scripts/new">Criar roteiro</a>
+    <div class="header-actions">
+      <button type="button" (click)="syncComments()" [disabled]="loading() || syncing()">
+        @if (syncing()) {
+          Sincronizando...
+        } @else {
+          Sincronizar comentarios
+        }
+      </button>
+      <button
+        class="primary-action"
+        type="button"
+        (click)="createScript()"
+        [disabled]="selectedCount() === 0"
+      >
+        Criar roteiro
+      </button>
+    </div>
   </header>
 
-  <div class="empty-state">
-    <h2>Nenhum comentario carregado</h2>
-    <p>
-      A listagem, sincronizacao e ordenacoes entram depois da integracao com
-      YouTube e Supabase.
-    </p>
-  </div>
+  <section class="toolbar" aria-label="Controles de comentarios">
+    <div class="sync-summary">
+      <span class="summary-label">Ultima sincronizacao</span>
+      @if (lastSyncJob(); as job) {
+        <strong [class.failed]="job.status === 'failed'">{{ job.status }}</strong>
+        <span>{{ job.startedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+        <span>{{ job.processedCount }} processados</span>
+        <span>{{ job.importedCount }} novos</span>
+        <span>{{ job.updatedCount }} atualizados</span>
+      } @else {
+        <span>Nenhuma sincronizacao registrada</span>
+      }
+    </div>
+
+    <label class="sort-control">
+      <span>Ordenar</span>
+      <select
+        [ngModel]="sortMode()"
+        (ngModelChange)="updateSortMode($event)"
+        [disabled]="loading() || syncing()"
+      >
+        @for (option of sortOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </label>
+  </section>
+
+  @if (error(); as message) {
+    <p class="feedback" role="alert">{{ message }}</p>
+  }
+
+  @if (lastSyncJob()?.errorMessage; as syncError) {
+    <p class="feedback" role="alert">{{ syncError }}</p>
+  }
+
+  <section class="selection-bar" aria-live="polite">
+    <span>{{ selectedCount() }} selecionados para roteiro</span>
+    <span>{{ comments().length }} comentarios carregados</span>
+  </section>
+
+  @if (loading()) {
+    <div class="empty-state">
+      <h2>Carregando comentarios</h2>
+      <p>Buscando comentarios importados, videos e usos em roteiros.</p>
+    </div>
+  } @else if (sortedComments().length === 0) {
+    <div class="empty-state">
+      <h2>Nenhum comentario carregado</h2>
+      <p>Sincronize comentarios depois de conectar seu canal do YouTube.</p>
+    </div>
+  } @else {
+    <div class="comment-list" role="list">
+      @for (item of sortedComments(); track trackByCommentId($index, item)) {
+        <article class="comment-row" role="listitem" [class.comment-row--selected]="item.isSelected">
+          <label class="select-box" [attr.aria-label]="'Selecionar comentario de ' + item.comment.authorName">
+            <input
+              type="checkbox"
+              [checked]="item.isSelected"
+              (change)="toggleSelection(item.comment.id, $any($event.target).checked)"
+            />
+          </label>
+
+          <div class="comment-main">
+            <div class="comment-meta">
+              <strong>{{ item.comment.authorName }}</strong>
+              <span>{{ item.comment.publishedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+              <span>{{ item.comment.likeCount }} curtidas</span>
+            </div>
+
+            <p class="comment-text">{{ item.comment.text }}</p>
+
+            <div class="video-line">
+              <a [href]="item.video.url" target="_blank" rel="noreferrer">
+                {{ item.video.title }}
+              </a>
+              @if (item.usedInScripts.length > 0) {
+                <div class="used-badges" aria-label="Roteiros que usam este comentario">
+                  @for (script of item.usedInScripts; track script.id) {
+                    <span>Usado em: {{ script.title }}</span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <button
+            class="favorite-button"
+            type="button"
+            [class.favorite-button--active]="item.isFavorite"
+            (click)="toggleFavorite(item)"
+            [attr.aria-label]="item.isFavorite ? 'Remover favorito' : 'Marcar favorito'"
+          >
+            {{ item.isFavorite ? 'Favorito' : 'Favoritar' }}
+          </button>
+        </article>
+      }
+    </div>
+  }
 </section>
