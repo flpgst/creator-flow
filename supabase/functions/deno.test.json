@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "lib": ["deno.ns", "dom", "dom.iterable", "esnext"],
+    "strict": true
+  },
+  "imports": {
+    "https://esm.sh/@supabase/supabase-js@2.107.0": "./_tests/supabase-js.mock.ts"
+  }
+}
