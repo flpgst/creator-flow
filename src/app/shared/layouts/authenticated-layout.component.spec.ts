@@ -40,4 +40,14 @@ describe('AuthenticatedLayoutComponent', () => {
     expect(navText).not.toContain('Novo roteiro');
     expect(scriptsLink?.getAttribute('href')).toBe('/scripts');
   });
+
+  it('shows the Creator Flow logo in the header', () => {
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const logo = compiled.querySelector<HTMLImageElement>('.brand-logo');
+
+    expect(logo?.getAttribute('src')).toBe('/creator-flow-logo.webp');
+    expect(logo?.getAttribute('alt')).toBe('');
+  });
 });
