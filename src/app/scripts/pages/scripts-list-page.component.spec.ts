@@ -61,12 +61,13 @@ describe('ScriptsListPageComponent', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
+    const renderedText = textContent(compiled);
 
     expect(scriptsService.loadScripts).toHaveBeenCalled();
-    expect(compiled.textContent).toContain('Roteiro um');
-    expect(compiled.textContent).toContain('2 comentarios');
-    expect(compiled.textContent).toContain('Roteiro dois');
-    expect(compiled.textContent).toContain('1 comentario');
+    expect(renderedText).toContain('Roteiro um');
+    expect(renderedText).toContain('2 comentarios');
+    expect(renderedText).toContain('Roteiro dois');
+    expect(renderedText).toContain('1 comentario');
   });
 
   it('renders the open action pointing to the script detail route', async () => {

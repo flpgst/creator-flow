@@ -47,7 +47,7 @@ jobs:
       - name: Test Angular
         env:
           CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
-        run: npm test -- --watch=false --browsers=ChromeHeadless
+        run: npm test -- --watch=false --browsers=ChromeHeadlessNoSandbox
 
       - name: Test Supabase Edge Functions
         run: npm run test:supabase:functions
