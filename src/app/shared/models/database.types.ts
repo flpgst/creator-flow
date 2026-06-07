@@ -207,7 +207,24 @@ export interface Database {
       >;
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      replace_script_comments: {
+        Args: {
+          p_script_id: string;
+          p_comments?: Json;
+        };
+        Returns: {
+          id: string;
+          script_id: string;
+          comment_id: string;
+          position: number;
+          comment_text_snapshot: string;
+          video_title_snapshot: string;
+          video_url_snapshot: string;
+          created_at: string;
+        }[];
+      };
+    };
     Enums: {
       youtube_connection_status: YoutubeConnectionStatus;
       youtube_sync_job_status: YoutubeSyncJobStatus;

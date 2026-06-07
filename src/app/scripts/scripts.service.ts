@@ -235,21 +235,7 @@ export class ScriptsService {
     this.errorState.set(null);
 
     try {
-      const { error: deleteError } = await this.supabaseService.client
-        .from('script_comments')
-        .delete()
-        .eq('script_id', scriptId);
-
-      if (deleteError) {
-        throw new Error(deleteError.message);
-      }
-
-      if (comments.length === 0) {
-        return [];
-      }
-
-      const scriptComments: ScriptCommentInsert[] = comments.map((item, index) => ({
-        script_id: scriptId,
+      const scriptComments = comments.map((item, index) => ({
         comment_id: item.commentId,
         position: index,
         comment_text_snapshot: item.text,
@@ -257,28 +243,16 @@ export class ScriptsService {
         video_url_snapshot: item.videoUrl,
       }));
 
-      const { data, error: insertError } = await this.supabaseService.client
-        .from('script_comments')
-        .insert(scriptComments)
-        .select(
-          [
-            'id',
-            'script_id',
-            'comment_id',
-            'position',
-            'comment_text_snapshot',
-            'video_title_snapshot',
-            'video_url_snapshot',
-            'created_at',
-          ].join(','),
-        )
-        .order('position', {
-          ascending: true,
-        })
-        .returns<ScriptCommentRow[]>();
+      const { data, error } = await this.supabaseService.client.rpc(
+        'replace_script_comments',
+        {
+          p_script_id: scriptId,
+          p_comments: scriptComments,
+        },
+      );
 
-      if (insertError) {
-        throw new Error(insertError.message);
+      if (error) {
+        throw new Error(error.message);
       }
 
       return (data ?? []).map((comment) => this.mapScriptCommentItem(comment));
