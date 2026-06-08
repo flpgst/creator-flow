@@ -68,6 +68,18 @@ export class ScriptDetailPageComponent implements OnInit {
     this.hasChanges.set(true);
   }
 
+  async toggleAnswered(item: ScriptCommentItem): Promise<void> {
+    const nextValue = !item.isAnswered;
+
+    this.updateCommentAnswered(item.id, nextValue);
+
+    try {
+      await this.scriptsService.setScriptCommentAnswered(item.id, nextValue);
+    } catch {
+      this.updateCommentAnswered(item.id, item.isAnswered);
+    }
+  }
+
   async saveChanges(): Promise<void> {
     if (!this.canSave()) {
       return;
@@ -94,5 +106,18 @@ export class ScriptDetailPageComponent implements OnInit {
       ...comment,
       position,
     }));
+  }
+
+  private updateCommentAnswered(scriptCommentId: string, isAnswered: boolean): void {
+    this.comments.update((comments) =>
+      comments.map((comment) =>
+        comment.id === scriptCommentId
+          ? {
+              ...comment,
+              isAnswered,
+            }
+          : comment,
+      ),
+    );
   }
 }

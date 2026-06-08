@@ -79,5 +79,6 @@ export interface ScriptComment {
   commentTextSnapshot: string;
   videoTitleSnapshot: string;
   videoUrlSnapshot: string;
+  isAnswered: boolean;
   createdAt: IsoDateString;
 }

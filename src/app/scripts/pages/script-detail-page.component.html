@@ -51,7 +51,7 @@
   } @else {
     <section class="selected-comments" aria-label="Comentários do roteiro">
       @for (item of comments(); track trackByScriptCommentId($index, item); let index = $index) {
-        <article class="comment-row">
+        <article class="comment-row" [class.is-answered]="item.isAnswered">
           <div class="position">{{ index + 1 }}</div>
 
           <div class="comment-main">
@@ -66,6 +66,18 @@
           </div>
 
           <div class="row-actions" aria-label="Editar comentário do roteiro">
+            <button
+              type="button"
+              class="answered-button"
+              (click)="toggleAnswered(item)"
+              [disabled]="saving()"
+            >
+              @if (item.isAnswered) {
+                Marcar não respondido
+              } @else {
+                Marcar respondido
+              }
+            </button>
             <button
               type="button"
               (click)="moveComment(index, -1)"

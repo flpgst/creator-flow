@@ -192,6 +192,7 @@ export interface Database {
           comment_text_snapshot: string;
           video_title_snapshot: string;
           video_url_snapshot: string;
+          is_answered: boolean;
           created_at: string;
         },
         {
@@ -202,6 +203,7 @@ export interface Database {
           comment_text_snapshot: string;
           video_title_snapshot: string;
           video_url_snapshot: string;
+          is_answered?: boolean;
           created_at?: string;
         }
       >;
@@ -221,6 +223,7 @@ export interface Database {
           comment_text_snapshot: string;
           video_title_snapshot: string;
           video_url_snapshot: string;
+          is_answered: boolean;
           created_at: string;
         }[];
       };

@@ -1,6 +1,6 @@
 begin;
 
-select plan(10);
+select plan(13);
 
 insert into auth.users (id, email)
 values
@@ -194,6 +194,34 @@ on conflict (id) do nothing;
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000001', true);
 
+insert into public.script_comments (
+  script_id,
+  comment_id,
+  position,
+  comment_text_snapshot,
+  video_title_snapshot,
+  video_url_snapshot
+)
+values (
+  '30000000-0000-4000-8000-000000000001',
+  '20000000-0000-4000-8000-000000000003',
+  0,
+  'Comment A 2',
+  'Video A',
+  'https://www.youtube.com/watch?v=yt-video-a'
+);
+
+select is(
+  (
+    select is_answered
+    from public.script_comments
+    where script_id = '30000000-0000-4000-8000-000000000001'
+      and comment_id = '20000000-0000-4000-8000-000000000003'
+  ),
+  false,
+  'script_comments.is_answered defaults to false'
+);
+
 select lives_ok(
   $$
     select *
@@ -205,7 +233,8 @@ select lives_ok(
           "position": 0,
           "comment_text_snapshot": "Comment A 2",
           "video_title_snapshot": "Video A",
-          "video_url_snapshot": "https://www.youtube.com/watch?v=yt-video-a"
+          "video_url_snapshot": "https://www.youtube.com/watch?v=yt-video-a",
+          "is_answered": true
         },
         {
           "comment_id": "20000000-0000-4000-8000-000000000001",
@@ -222,12 +251,51 @@ select lives_ok(
 
 select is(
   (
+    select string_agg(is_answered::text, '|' order by position)
+    from public.script_comments
+    where script_id = '30000000-0000-4000-8000-000000000001'
+  ),
+  'true|false',
+  'replace_script_comments saves is_answered values'
+);
+
+select is(
+  (
     select string_agg(comment_text_snapshot, '|' order by position)
     from public.script_comments
     where script_id = '30000000-0000-4000-8000-000000000001'
   ),
   'Comment A 2|Comment A Updated',
   'script_comments.position preserves script order'
+);
+
+select is(
+  (
+    select string_agg(comment_text_snapshot || ':' || is_answered::text, '|' order by position)
+    from public.replace_script_comments(
+      '30000000-0000-4000-8000-000000000001',
+      '[
+        {
+          "comment_id": "20000000-0000-4000-8000-000000000001",
+          "position": 0,
+          "comment_text_snapshot": "Comment A Updated",
+          "video_title_snapshot": "Video A",
+          "video_url_snapshot": "https://www.youtube.com/watch?v=yt-video-a",
+          "is_answered": false
+        },
+        {
+          "comment_id": "20000000-0000-4000-8000-000000000003",
+          "position": 1,
+          "comment_text_snapshot": "Comment A 2",
+          "video_title_snapshot": "Video A",
+          "video_url_snapshot": "https://www.youtube.com/watch?v=yt-video-a",
+          "is_answered": true
+        }
+      ]'::jsonb
+    )
+  ),
+  'Comment A Updated:false|Comment A 2:true',
+  'replace_script_comments returns is_answered and preserves status sent during reorder'
 );
 
 select throws_ok(

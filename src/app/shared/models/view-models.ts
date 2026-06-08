@@ -20,6 +20,7 @@ export interface ScriptCommentItem {
   videoTitle: string;
   videoUrl: string;
   position: number;
+  isAnswered: boolean;
 }
 
 export interface ScriptDetailViewModel {

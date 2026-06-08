@@ -107,6 +107,7 @@ export class ScriptsService {
               'comment_text_snapshot',
               'video_title_snapshot',
               'video_url_snapshot',
+              'is_answered',
               'created_at',
             ].join(','),
           )
@@ -287,6 +288,7 @@ export class ScriptsService {
         comment_text_snapshot: item.text,
         video_title_snapshot: item.videoTitle,
         video_url_snapshot: item.videoUrl,
+        is_answered: item.isAnswered,
       }));
 
       const { data, error } = await this.supabaseService.client.rpc(
@@ -302,6 +304,30 @@ export class ScriptsService {
       }
 
       return (data ?? []).map((comment) => this.mapScriptCommentItem(comment));
+    } catch (error) {
+      this.errorState.set(this.toScriptsErrorMessage(error));
+      throw error;
+    } finally {
+      this.savingState.set(false);
+    }
+  }
+
+  async setScriptCommentAnswered(
+    scriptCommentId: string,
+    isAnswered: boolean,
+  ): Promise<void> {
+    this.savingState.set(true);
+    this.errorState.set(null);
+
+    try {
+      const { error } = await this.supabaseService.client
+        .from('script_comments')
+        .update({ is_answered: isAnswered })
+        .eq('id', scriptCommentId);
+
+      if (error) {
+        throw new Error(error.message);
+      }
     } catch (error) {
       this.errorState.set(this.toScriptsErrorMessage(error));
       throw error;
@@ -408,6 +434,7 @@ export class ScriptsService {
       commentTextSnapshot: row.comment_text_snapshot,
       videoTitleSnapshot: row.video_title_snapshot,
       videoUrlSnapshot: row.video_url_snapshot,
+      isAnswered: row.is_answered,
       createdAt: row.created_at,
     };
   }
@@ -422,6 +449,7 @@ export class ScriptsService {
       videoTitle: scriptComment.videoTitleSnapshot,
       videoUrl: scriptComment.videoUrlSnapshot,
       position: scriptComment.position,
+      isAnswered: scriptComment.isAnswered,
     };
   }
 

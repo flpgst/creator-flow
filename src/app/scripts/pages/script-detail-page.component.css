@@ -129,6 +129,11 @@ button:disabled {
   padding: 1rem;
 }
 
+.comment-row.is-answered {
+  background: #f8fafc;
+  border-left: 3px solid #94a3b8;
+}
+
 .comment-row + .comment-row {
   border-top: 1px solid #e2e8f0;
 }
@@ -185,6 +190,18 @@ button:disabled {
   background: #fff7ed;
   border-color: #fed7aa;
   color: #9a3412;
+}
+
+.row-actions .answered-button {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #334155;
+}
+
+.comment-row.is-answered .answered-button {
+  background: #e2e8f0;
+  border-color: #64748b;
+  color: #1e293b;
 }
 
 @media (max-width: 760px) {
