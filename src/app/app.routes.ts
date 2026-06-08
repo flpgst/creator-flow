@@ -7,8 +7,22 @@ export const routes: Routes = [
     path: '',
     pathMatch: 'full',
     loadComponent: () =>
-      import('./shared/routing/home-redirect.component').then(
-        (m) => m.HomeRedirectComponent,
+      import('./public/pages/home-page/home-page.component').then(
+        (m) => m.HomePageComponent,
+      ),
+  },
+  {
+    path: 'privacy',
+    loadComponent: () =>
+      import('./public/pages/privacy-page/privacy-page.component').then(
+        (m) => m.PrivacyPageComponent,
+      ),
+  },
+  {
+    path: 'terms',
+    loadComponent: () =>
+      import('./public/pages/terms-page/terms-page.component').then(
+        (m) => m.TermsPageComponent,
       ),
   },
   {
