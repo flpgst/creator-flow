@@ -65,9 +65,9 @@ describe('ScriptsListPageComponent', () => {
 
     expect(scriptsService.loadScripts).toHaveBeenCalled();
     expect(renderedText).toContain('Roteiro um');
-    expect(renderedText).toContain('2 comentarios');
+    expect(renderedText).toContain('2 comentários');
     expect(renderedText).toContain('Roteiro dois');
-    expect(renderedText).toContain('1 comentario');
+    expect(renderedText).toContain('1 comentário');
   });
 
   it('renders the open action pointing to the script detail route', async () => {
