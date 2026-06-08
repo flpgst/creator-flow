@@ -103,13 +103,13 @@ jobs:
         run: npm ci
 
       - name: Link Supabase project
-        run: npx supabase link --workdir supabase --project-ref "$SUPABASE_PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
+        run: npx supabase link --project-ref "$SUPABASE_PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
 
       - name: Apply Supabase migrations
-        run: npx supabase db push --workdir supabase --linked --password "$SUPABASE_DB_PASSWORD" --yes
+        run: npx supabase db push --linked --password "$SUPABASE_DB_PASSWORD" --yes
 
       - name: Deploy Supabase Edge Functions
-        run: npx supabase functions deploy youtube-oauth-start youtube-oauth-callback youtube-sync-comments --workdir supabase --project-ref "$SUPABASE_PROJECT_REF"
+        run: npx supabase functions deploy youtube-oauth-start youtube-oauth-callback youtube-sync-comments --project-ref "$SUPABASE_PROJECT_REF"
 
   deploy:
     name: Deploy to GitHub Pages
