@@ -47,7 +47,7 @@ describe('AuthenticatedLayoutComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const logo = compiled.querySelector<HTMLImageElement>('.brand-logo');
 
-    expect(logo?.getAttribute('src')).toBe('/creator-flow-logo.webp');
+    expect(logo?.getAttribute('src')).toBe('creator-flow-logo.webp');
     expect(logo?.getAttribute('alt')).toBe('');
   });
 });
