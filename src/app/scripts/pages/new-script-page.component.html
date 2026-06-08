@@ -4,15 +4,15 @@
       <p class="eyebrow">Roteiros</p>
       <h1>Novo roteiro</h1>
     </div>
-    <a routerLink="/comments">Voltar aos comentarios</a>
+    <a routerLink="/comments">Voltar aos comentários</a>
   </header>
 
   <form class="script-form" (ngSubmit)="saveScript()">
-    <label for="script-title">Titulo</label>
+    <label for="script-title">Título</label>
     <input
       id="script-title"
       type="text"
-      placeholder="Titulo do roteiro"
+      placeholder="Título do roteiro"
       [ngModel]="title()"
       (ngModelChange)="updateTitle($event)"
       (blur)="markTitleTouched()"
@@ -22,7 +22,7 @@
       [attr.aria-invalid]="titleIsInvalid()"
     />
     @if (titleIsInvalid()) {
-      <p class="field-error">Informe um titulo para salvar o roteiro.</p>
+      <p class="field-error">Informe um título para salvar o roteiro.</p>
     }
 
     <button type="submit" [disabled]="!canSave()">
@@ -40,16 +40,16 @@
 
   @if (loading()) {
     <div class="empty-state">
-      <h2>Carregando comentarios</h2>
-      <p>Buscando os comentarios selecionados para montar o roteiro.</p>
+      <h2>Carregando comentários</h2>
+      <p>Buscando os comentários selecionados para montar o roteiro.</p>
     </div>
   } @else if (comments().length === 0) {
     <div class="empty-state">
-      <h2>Nenhum comentario selecionado</h2>
-      <p>Selecione comentarios na listagem antes de criar um roteiro.</p>
+      <h2>Nenhum comentário selecionado</h2>
+      <p>Selecione comentários na listagem antes de criar um roteiro.</p>
     </div>
   } @else {
-    <section class="selected-comments" aria-label="Comentarios selecionados">
+    <section class="selected-comments" aria-label="Comentários selecionados">
       @for (item of comments(); track trackByCommentId($index, item); let index = $index) {
         <article class="comment-row">
           <div class="position">{{ index + 1 }}</div>
@@ -62,16 +62,16 @@
             </div>
             <p>{{ item.comment.text }}</p>
             <a [href]="item.video.url" target="_blank" rel="noreferrer">
-              Abrir video
+              Abrir vídeo
             </a>
           </div>
 
-          <div class="row-actions" aria-label="Editar ordem do comentario">
+          <div class="row-actions" aria-label="Editar ordem do comentário">
             <button
               type="button"
               (click)="moveComment(index, -1)"
               [disabled]="index === 0 || saving()"
-              aria-label="Mover comentario para cima"
+              aria-label="Mover comentário para cima"
             >
               Subir
             </button>
@@ -79,7 +79,7 @@
               type="button"
               (click)="moveComment(index, 1)"
               [disabled]="index === comments().length - 1 || saving()"
-              aria-label="Mover comentario para baixo"
+              aria-label="Mover comentário para baixo"
             >
               Descer
             </button>

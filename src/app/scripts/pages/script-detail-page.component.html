@@ -11,7 +11,7 @@
     </div>
 
     <div class="header-actions">
-      <a routerLink="/comments">Voltar aos comentarios</a>
+      <a routerLink="/comments">Voltar aos comentários</a>
       <a routerLink="/scripts/new">Criar outro roteiro</a>
     </div>
   </header>
@@ -22,12 +22,12 @@
 
   @if (hasChanges()) {
     <section class="save-bar" aria-live="polite">
-      <span>Alteracoes nao salvas</span>
+      <span>Alterações não salvas</span>
       <button type="button" (click)="saveChanges()" [disabled]="!canSave()">
         @if (saving()) {
           Salvando...
         } @else {
-          Salvar alteracoes
+          Salvar alterações
         }
       </button>
     </section>
@@ -36,20 +36,20 @@
   @if (loading()) {
     <div class="empty-state">
       <h2>Carregando roteiro</h2>
-      <p>Buscando conteudo salvo e comentarios vinculados.</p>
+      <p>Buscando conteúdo salvo e comentários vinculados.</p>
     </div>
   } @else if (notFound()) {
     <div class="empty-state">
-      <h2>Roteiro nao encontrado</h2>
-      <p>Este roteiro nao existe ou nao pertence ao usuario atual.</p>
+      <h2>Roteiro não encontrado</h2>
+      <p>Este roteiro não existe ou não pertence ao usuário atual.</p>
     </div>
   } @else if (comments().length === 0) {
     <div class="empty-state">
-      <h2>Nenhum comentario no roteiro</h2>
-      <p>Os vinculos removidos deixam de aparecer como usados na listagem.</p>
+      <h2>Nenhum comentário no roteiro</h2>
+      <p>Os vínculos removidos deixam de aparecer como usados na listagem.</p>
     </div>
   } @else {
-    <section class="selected-comments" aria-label="Comentarios do roteiro">
+    <section class="selected-comments" aria-label="Comentários do roteiro">
       @for (item of comments(); track trackByScriptCommentId($index, item); let index = $index) {
         <article class="comment-row">
           <div class="position">{{ index + 1 }}</div>
@@ -61,16 +61,16 @@
             </div>
             <p>{{ item.text }}</p>
             <a [href]="item.videoUrl" target="_blank" rel="noreferrer">
-              Abrir video
+              Abrir vídeo
             </a>
           </div>
 
-          <div class="row-actions" aria-label="Editar comentario do roteiro">
+          <div class="row-actions" aria-label="Editar comentário do roteiro">
             <button
               type="button"
               (click)="moveComment(index, -1)"
               [disabled]="index === 0 || saving()"
-              aria-label="Mover comentario para cima"
+              aria-label="Mover comentário para cima"
             >
               Subir
             </button>
@@ -78,7 +78,7 @@
               type="button"
               (click)="moveComment(index, 1)"
               [disabled]="index === comments().length - 1 || saving()"
-              aria-label="Mover comentario para baixo"
+              aria-label="Mover comentário para baixo"
             >
               Descer
             </button>

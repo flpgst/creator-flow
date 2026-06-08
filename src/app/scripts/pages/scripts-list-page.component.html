@@ -4,7 +4,7 @@
       <p class="eyebrow">Roteiros</p>
       <h1>Roteiros salvos</h1>
     </div>
-    <a routerLink="/comments">Voltar aos comentarios</a>
+    <a routerLink="/comments">Voltar aos comentários</a>
   </header>
 
   @if (error(); as message) {
@@ -33,9 +33,9 @@
           <p class="comment-count">
             {{ item.commentCount }}
             @if (item.commentCount === 1) {
-              comentario
+              comentário
             } @else {
-              comentarios
+              comentários
             }
           </p>
 

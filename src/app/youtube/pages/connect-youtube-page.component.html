@@ -7,7 +7,7 @@
   <div class="panel">
     @if (loading()) {
       <div class="status-block">
-        <h2>Carregando conexao</h2>
+        <h2>Carregando conexão</h2>
         <p>Buscando o status atual do canal conectado.</p>
       </div>
     } @else {
@@ -27,7 +27,7 @@
               <dd>{{ channel.connectedAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
             </div>
             <div>
-              <dt>Ultima atualizacao</dt>
+              <dt>Última atualização</dt>
               <dd>{{ channel.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
             </div>
           </dl>
@@ -35,7 +35,7 @@
       } @else {
         <div class="status-block">
           <h2>Nenhum canal conectado</h2>
-          <p>Conecte seu canal para importar comentarios e montar roteiros.</p>
+          <p>Conecte seu canal para importar comentários e montar roteiros.</p>
         </div>
       }
     }
