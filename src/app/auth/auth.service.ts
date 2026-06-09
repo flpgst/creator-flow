@@ -78,8 +78,12 @@ export class AuthService {
     this.errorState.set(null);
 
     try {
-      const { data, error } =
-        await this.supabaseService.client.auth.signUp(credentials);
+      const { data, error } = await this.supabaseService.client.auth.signUp({
+        ...credentials,
+        options: {
+          emailRedirectTo: `${window.location.origin}/comments`,
+        },
+      });
 
       if (error) {
         throw new Error(error.message);
