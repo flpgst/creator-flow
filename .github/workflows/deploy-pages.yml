@@ -53,7 +53,7 @@ jobs:
         run: npm run test:supabase:functions
 
       - name: Build Angular
-        run: npm run build -- --base-href=/creator-flow/ --deploy-url=/creator-flow/
+        run: npm run build
 
       - name: Create SPA fallback
         run: cp dist/creator-flow/browser/index.html dist/creator-flow/browser/404.html

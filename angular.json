@@ -33,8 +33,6 @@
           },
           "configurations": {
             "production": {
-              "baseHref": "/creator-flow/",
-              "deployUrl": "/creator-flow/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
