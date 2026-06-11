@@ -41,6 +41,10 @@ function requiredEnv(name: string): string {
   return value;
 }
 
+function getSupabaseServiceRoleKey(): string {
+  return Deno.env.get('CREATOR_FLOW_SUPABASE_SERVICE_ROLE_KEY') ?? requiredEnv('SUPABASE_SERVICE_ROLE_KEY');
+}
+
 function getAppUrl(): string {
   return Deno.env.get('APP_URL') ?? Deno.env.get('SITE_URL') ?? DEFAULT_APP_URL;
 }
@@ -208,7 +212,7 @@ Deno.serve(async (request) => {
     }
 
     const supabaseUrl = requiredEnv('SUPABASE_URL');
-    const supabaseServiceRoleKey = requiredEnv('SUPABASE_SERVICE_ROLE_KEY');
+    const supabaseServiceRoleKey = getSupabaseServiceRoleKey();
     const googleClientId = requiredEnv('GOOGLE_CLIENT_ID');
     const googleClientSecret = requiredEnv('GOOGLE_CLIENT_SECRET');
     const googleRedirectUri = requiredEnv('GOOGLE_OAUTH_REDIRECT_URI');

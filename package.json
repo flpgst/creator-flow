@@ -9,7 +9,9 @@
     "test": "ng test",
     "test:supabase": "npm run test:supabase:functions && npm run test:supabase:db",
     "test:supabase:db": "mkdir -p /tmp/.supabase && HOME=/tmp npx supabase test db --local supabase/tests",
-    "test:supabase:functions": "deno test --allow-env --allow-read=supabase/functions --config=supabase/functions/deno.test.json supabase/functions/_tests"
+    "test:supabase:functions": "deno test --allow-env --allow-read=supabase/functions --config=supabase/functions/deno.test.json supabase/functions/_tests",
+    "supabase:start": "npx supabase start",
+    "supabase:functions:start": "npx supabase functions serve --env-file supabase/.env.local"
   },
   "private": true,
   "dependencies": {

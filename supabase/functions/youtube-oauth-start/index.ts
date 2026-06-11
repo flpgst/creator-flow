@@ -38,6 +38,10 @@ function requiredEnv(name: string): string {
   return value;
 }
 
+function getSupabaseServiceRoleKey(): string {
+  return Deno.env.get('CREATOR_FLOW_SUPABASE_SERVICE_ROLE_KEY') ?? requiredEnv('SUPABASE_SERVICE_ROLE_KEY');
+}
+
 function getBearerToken(request: Request): string | null {
   const authorization = request.headers.get('Authorization');
 
@@ -110,7 +114,7 @@ Deno.serve(async (request) => {
   try {
     const supabaseUrl = requiredEnv('SUPABASE_URL');
     const supabaseAnonKey = requiredEnv('SUPABASE_ANON_KEY');
-    const supabaseServiceRoleKey = requiredEnv('SUPABASE_SERVICE_ROLE_KEY');
+    const supabaseServiceRoleKey = getSupabaseServiceRoleKey();
     const googleClientId = requiredEnv('GOOGLE_CLIENT_ID');
     const googleRedirectUri = requiredEnv('GOOGLE_OAUTH_REDIRECT_URI');
     const scopes = getGoogleScopes();
